@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>US Fees Calculator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f8fb; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #005b96; }
+        label { display: block; margin-top: 15px; font-weight: 500; }
+        input[type='number'], input[type='text'] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        button { margin-top: 20px; padding: 10px 20px; font-size: 16px; background-color: #005b96; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        button:hover { background-color: #004080; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>US Fees Calculator</h2>
+        <form id="feeForm">
+            <label>Client Name:
+                <input type="text" id="client_name" placeholder="Enter client name">
+            </label>
+            <label>Number of Bookkeeping Transactions:
+                <input type="number" id="bookkeeping_transactions" value="0">
+            </label>
+            <label>Number of Bank/Credit Card Accounts:
+                <input type="number" id="bank_accounts" value="0">
+            </label>
+            <label>Number of Bills:
+                <input type="number" id="bills" value="0">
+            </label>
+            <label>Number of Employees:
+                <input type="number" id="employees" value="0">
+            </label>
+            <label>Number of Sales Invoices:
+                <input type="number" id="sales_invoices" value="0">
+            </label>
+            <label>Number of Sales Tax Returns:
+                <input type="number" id="sales_tax_returns" value="0">
+            </label>
+            <button type="button" onclick="calculateFee()">Calculate</button>
+            <button type="button" onclick="resetForm()">Reset</button>
+            <button type="button" onclick="exportPDF()">Export to PDF</button>
+        </form>
+        <div id="result">Total Monthly Fee: $0.00</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function calculateFee() {
+            const bookkeeping = parseInt(document.getElementById('bookkeeping_transactions').value) || 0;
+            const bankAccounts = parseInt(document.getElementById('bank_accounts').value) || 0;
+            const bills = parseInt(document.getElementById('bills').value) || 0;
+            const employees = parseInt(document.getElementById('employees').value) || 0;
+            const invoices = parseInt(document.getElementById('sales_invoices').value) || 0;
+            const taxReturns = parseInt(document.getElementById('sales_tax_returns').value) || 0;
+
+            const total = 
+                bookkeeping * 1.0 +
+                bankAccounts * 50.0 +
+                bills * 2.0 +
+                150.0 + employees * 25.0 +
+                invoices * 15.0 +
+                taxReturns * 150.0;
+
+            document.getElementById('result').innerText = 'Total Monthly Fee: $' + total.toFixed(2);
+        }
+
+        function resetForm() {
+            document.getElementById('feeForm').reset();
+            document.getElementById('result').innerText = 'Total Monthly Fee: $0.00';
+        }
+
+        async function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const client = document.getElementById('client_name').value;
+            const result = document.getElementById('result').innerText;
+            doc.setFontSize(16);
+            doc.text("US Fees Calculator", 20, 20);
+            doc.setFontSize(12);
+            doc.text("Client Name: " + client, 20, 30);
+            doc.text(result, 20, 40);
+            doc.save("fee_summary.pdf");
+        }
+    </script>
+</body>
+</html>
