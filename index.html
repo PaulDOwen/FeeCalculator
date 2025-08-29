@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html>
@@ -53,7 +54,7 @@
 
 <h2>Engagement Letter Generator</h2>
 <form id="letterForm">
-  <label for="firstname">Client First Name:</label>
+  <label for="FirstName">Client First Name:</label>
   <input type="text" id="FirstName" placeholder="Enter client first name" type="text">
 
   <label for="totalFee">Monthly Fee:</label>
@@ -64,6 +65,7 @@
   <script>
     document.getElementById('downloadPDF').addEventListener('click', async function () {
       const clientName = document.getElementById('clientName').value || 'Client Name';
+      const FirstName = document.getElementById('FirstName').value || 'FIrst Name';
       const totalFee = document.getElementById('totalFee').value || '$0.00';
 
       const today = new Date();
@@ -79,7 +81,7 @@
       const content = `
 ${letterDate}
 
-Dear ${firstName},
+Dear ${FirstName},
 
 RE: Engagement Letter for Accounting Services
 
@@ -185,3 +187,4 @@ doc.setFontSize(12);
 
 </body>
 </html>
+
