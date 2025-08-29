@@ -1,9 +1,11 @@
 
 <!DOCTYPE html>
+
 <html>
 <head>
-    <title>Fees Calculator</title>
-    <style>
+<title>Fees Calculator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f8fb; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h2 { color: #005b96; }
@@ -15,39 +17,132 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Fees Calculator</h2>
-        <form id="feeForm">
-            <label>Client Name:
-                <input type="text" id="client_name" placeholder="Enter client name">
-            </label>
-            <label>Number of Bookkeeping Transactions:
-                <input type="number" id="bookkeeping_transactions" value="0">
-            </label>
-            <label>Number of Bank/Credit Card Accounts:
-                <input type="number" id="bank_accounts" value="0">
-            </label>
-            <label>Number of Bills:
-                <input type="number" id="bills" value="0">
-            </label>
-            <label>Number of Employees:
-                <input type="number" id="employees" value="0">
-            </label>
-            <label>Number of Sales Invoices:
-                <input type="number" id="sales_invoices" value="0">
-            </label>
-            <label>Number of Sales Tax Returns:
-                <input type="number" id="sales_tax_returns" value="0">
-            </label>
-            <button type="button" onclick="calculateFee()">Calculate</button>
-            <button type="button" onclick="resetForm()">Reset</button>
-            <button type="button" onclick="exportPDF()">Export to PDF</button>
-        </form>
-        <div id="result">Total Monthly Fee: $0.00</div>
-    </div>
+<div class="container">
+<h2>Fees Calculator</h2>
+<form id="feeForm">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
+</label>
+<label for="clientName">Business Name:</label><input id="clientName" placeholder="Enter client name" type="text"/>
+
+</label>
+<label>Number of Bookkeeping Transactions:
+                <input id="bookkeeping_transactions" type="number" value="0"/>
+</label>
+<label>Number of Bank/Credit Card Accounts:
+                <input id="bank_accounts" type="number" value="0"/>
+</label>
+<label>Number of Bills:
+                <input id="bills" type="number" value="0"/>
+</label>
+<label>Number of Employees:
+                <input id="employees" type="number" value="0"/>
+</label>
+<label>Number of Sales Invoices:
+                <input id="sales_invoices" type="number" value="0"/>
+</label>
+<label>Number of Sales Tax Returns:
+                <input id="sales_tax_returns" type="number" value="0"/>
+</label>
+<button onclick="calculateFee()" type="button">Calculate</button>
+<button onclick="resetForm()" type="button">Reset</button>
+<button onclick="exportPDF()" type="button">Export to PDF</button>
+
+
+</form>
+<div id="result">Total Monthly Fee: $0.00</div>
+
+
+<h2>Engagement Letter Generator</h2>
+<form id="letterForm">
+  <label for="FirstName">Client First Name:</label>
+  <input type="text" id="FirstName" placeholder="Enter client first name" type="text">
+
+  <label for="totalFee">Monthly Fee:</label>
+  <input type="text" id="totalFee" value="$0"><br><br>
+
+<button id="downloadPDF">Download Engagement Letter PDF</button>
+
+  <script>
+    document.getElementById('downloadPDF').addEventListener('click', async function () {
+      const clientName = document.getElementById('clientName').value || 'Client Name';
+      const FirstName = document.getElementById('FirstName').value || 'FIrst Name';
+      const totalFee = document.getElementById('totalFee').value || '$0.00';
+
+      const today = new Date();
+      const letterDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+      const startDate = nextMonth.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+      doc.setFont('times', 'normal');
+      doc.setFontSize(12);
+
+      const content = `
+${letterDate}
+
+Dear ${FirstName},
+
+RE: Engagement Letter for Accounting Services
+
+I am writing to confirm the terms of our engagement for the provision of accounting for ${clientName} (hereinafter referred to as "the Client"). This letter outlines the scope of services, responsibilities, and terms of our engagement.
+
+3. Term: This engagement will commence on ${startDate} and will continue until either party provides written notice of termination, with thirty days' notice.
+
+4. Fees: The fees for the service will be ${totalFee} billed on a monthly basis. The Client agrees to pay all invoices within seven days of receipt. The preferred payment method is direct deposit.
+
+5. Responsibilities: The Client agrees to:
+  a. Provide accurate and complete financial records and documents to the Firm in a timely manner.
+  b. Communicate any changes or updates to financial information promptly.
+  c. Cooperate and respond to inquiries from the Firm as needed to perform the services.
+  d. Ensure compliance with all applicable tax and regulatory requirements.
+
+6. Confidentiality: The Firm will maintain the confidentiality of all financial information and records provided by the Client. No information will be disclosed to third parties without the Client's consent, except as required by law. The firm privacy policy is available at https://www.atlanticaccounts.com/privacy-policy
+
+7. Termination: Either party may terminate this engagement by providing written notice with the agreed-upon notice period of 30 days. In the event of termination, the Client is responsible for settling any outstanding fees for services provided up to the termination date.
+
+8. Governing Law: This engagement shall be governed by and construed in accordance with the laws of Florida.
+
+9. Entire Agreement: This engagement letter constitutes the entire agreement between the parties and supersedes all prior agreements and understandings, whether oral or written.
+
+Please sign below to indicate your acceptance of the terms outlined herein. If you have any questions or require further clarification, please do not hesitate to contact us.
+
+We look forward to providing you with professional accounting services and assisting your business in maintaining accurate financial records.
+
+Sincerely,
+
+Director
+
+I accept the terms and conditions outlined in this engagement letter:
+Client's Signature: __________________________     Date: ______________
+Client's Name (Printed): ______________________
+      `;
+
+      const lines = doc.splitTextToSize(content, 500);
+      let y = 40;
+      lines.forEach(line => {
+        if (y > 750) {
+          doc.setFontSize(8);
+          doc.text('Owen Talavera Corp DBA Atlantic Accounts US, 516 S Dixie Hwy Ste 214, West Palm Beach, FL 33401,atlanticaccounts.com', 40, 780);
+          doc.addPage();
+          doc.setFontSize(12);
+          y = 40;
+        }
+        doc.text(line, 40, y);
+        y += 16;
+      });
+      doc.setFontSize(8);
+      doc.text('Owen Talavera Corp DBA Atlantic Accounts US, 516 S Dixie Hwy Ste 214, West Palm Beach, FL 33401,atlanticaccounts.com', 40, 780);
+
+
+      doc.save('Engagement_Letter.pdf');
+    });
+  </script>
+
+
+</div>
+
+<script>
         function calculateFee() {
             const bookkeeping = parseInt(document.getElementById('bookkeeping_transactions').value) || 0;
             const bankAccounts = parseInt(document.getElementById('bank_accounts').value) || 0;
@@ -70,11 +165,15 @@
         function resetForm() {
             document.getElementById('feeForm').reset();
             document.getElementById('result').innerText = 'Total Monthly Fee: $0.00';
+            document.getElementById('letterForm').reset();
         }
+
 
         async function exportPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+doc.setFont('times', 'normal');
+doc.setFontSize(12);
             const client = document.getElementById('client_name').value;
             const result = document.getElementById('result').innerText;
             doc.setFontSize(16);
@@ -85,5 +184,6 @@
             doc.save("fee_summary.pdf");
         }
     </script>
+
 </body>
 </html>
